@@ -11,31 +11,32 @@ class CompaniesTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function setup(): void
-    {
-        parent::setup();
-        $this->actingAs(factory(User::class)->create());
-    }
 
+    /**
+     * @test
+     */
     public function can_only_administer_companies_as_an_admin()
     {
-        $this->get(route('companies'))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->get(route('company.index'))
+            ->assertRedirect(route('login'));
 
-        $this->get(route('company/1'))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->get(route('company.show', 1))
+            ->assertRedirect(route('login'));
 
-        $this->post(route('company/create'))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->get(route('company.create'))
+            ->assertRedirect(route('login'));
 
-        $this->get(route('company/1/edit'))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->post(route('company.store'))
+            ->assertRedirect(route('login'));
 
-        $this->post(route('company/1/update'))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->get(route('company.edit', 1))
+            ->assertRedirect(route('login'));
 
-        $this->get(route('company/1/delete'))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->put(route('company.update', 1))
+            ->assertRedirect(route('login'));
+
+        $this->get(route('company.destroy', 1))
+            ->assertRedirect(route('login'));
     }
 
     /**
@@ -43,7 +44,7 @@ class CompaniesTest extends TestCase
      */
     public function can_view_all_companies()
     {
-
+        $this->actingAs(factory(User::class)->create());
     }
 
     /**
