@@ -20,7 +20,7 @@ class CompanyController extends Controller
 
     public function create(): View
     {
-
+        return view('admin.company.create');
     }
 
     public function store(CreateCompany $request)
@@ -34,7 +34,7 @@ class CompanyController extends Controller
 
     public function show(Company $company): View
     {
-        return view('admin.company.index', [
+        return view('admin.company.show', [
             'company' => $company
         ]);
     }
@@ -50,7 +50,7 @@ class CompanyController extends Controller
     {
         $company->update($request->validated());
 
-        session()->flash('success', 'Company update');
+        session()->flash('success', 'Company updated');
 
         return redirect()->route('company.index');
     }
@@ -59,7 +59,7 @@ class CompanyController extends Controller
     {
         $company->delete();
 
-        session()->flash('success', 'Company update');
+        session()->flash('success', 'Company deleted');
 
         return redirect()->route('company.index');
     }

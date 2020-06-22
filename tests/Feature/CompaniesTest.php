@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Company;
-use App\User;
+
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
@@ -16,26 +16,28 @@ class CompaniesTest extends TestCase
      */
     public function can_only_administer_companies_as_an_admin()
     {
-        $this->get(route('company.index'))
-            ->assertRedirect(route('login'));
+        $this->visitRoute('company.index')
+            ->seeRouteIs('login');
 
-        $this->get(route('company.show', 1))
-            ->assertRedirect(route('login'));
+        $this->visitRoute('company.show', 1)
+            ->seeRouteIs('login');
 
-        $this->get(route('company.create'))
-            ->assertRedirect(route('login'));
+        $this->visitRoute('company.create')
+            ->seeRouteIs('login');
 
         $this->post(route('company.store'))
-            ->assertRedirect(route('login'));
+            ->followRedirects()
+            ->seeRouteIs('login');
 
-        $this->get(route('company.edit', 1))
-            ->assertRedirect(route('login'));
+        $this->visitRoute('company.edit', 1)
+            ->seeRouteIs('login');
 
         $this->put(route('company.update', 1))
-            ->assertRedirect(route('login'));
+            ->followRedirects()
+            ->seeRouteIs('login');
 
-        $this->get(route('company.destroy', 1))
-            ->assertRedirect(route('login'));
+        $this->visitRoute('company.destroy', 1)
+            ->seeRouteIs('login');
     }
 
     /**
@@ -55,12 +57,19 @@ class CompaniesTest extends TestCase
         factory(Company::class)->create([
             'name' => 'company #2',
             'email' => 'admin@company2.com',
-            'logo' => 'LOGO?',
+            'logo' => 'LOGO2?',
             'website' => 'http://www.company2.com',
         ]);
 
-        $this->get(route('company.index'))
-            ->assertViewHas(['companies']);
+        $this->visitRoute('company.index')
+            ->see('company #1')
+            ->see('admin@company1.com')
+            ->see('LOGO?')
+            ->see('http://www.company1.com')
+            ->see('company #2')
+            ->see('admin@company2.com')
+            ->see('LOGO2?')
+            ->see('http://www.company2.com');
     }
 
     /**
@@ -76,8 +85,11 @@ class CompaniesTest extends TestCase
         ]);
 
         $this->actingAsAdmin()
-            ->get(route('company.show', $company->id))
-            ->assertViewHas('company', $company);
+            ->visitRoute('company.show', $company->id)
+            ->see('company #1')
+            ->see('admin@company1.com')
+            ->see('LOGO?')
+            ->see('http://www.company1.com');
     }
 
     /**
@@ -87,16 +99,17 @@ class CompaniesTest extends TestCase
     {
         $this
             ->actingAsAdmin()
-            ->post(route('company.store'), [
+            ->visitRoute('company.create')
+            ->submitForm('Create', [
                 'name' => 'company #1',
                 'email' => 'admin@company1.com',
                 'logo' => 'LOGO?',
                 'website' => 'http://www.company1.com',
             ])
-            ->assertRedirect(route('company.index'))
-            ->assertSessionHas('success');
+            ->seeRouteIs('company.index')
+            ->seeText('Company created');
 
-        $this->assertDatabaseHas('companies', [
+        $this->seeInDatabase('companies', [
             'name' => 'company #1',
             'email' => 'admin@company1.com',
             'logo' => 'LOGO?',
@@ -118,16 +131,17 @@ class CompaniesTest extends TestCase
 
         $this
             ->actingAsAdmin()
-            ->put(route('company.update', $company->id), [
+            ->visitRoute('company.edit', $company->id)
+            ->submitForm('Update', [
                 'name' => 'updated company #1',
                 'email' => 'other@company1.com',
                 'logo' => 'updated_LOGO?',
                 'website' => 'http://www.company1.co.uk',
             ])
-            ->assertRedirect(route('company.index'))
-            ->assertSessionHas('success');
+            ->seeRouteIs('company.index')
+            ->seeText('Company updated');
 
-        $this->assertDatabaseHas('companies', [
+        $this->seeInDatabase('companies', [
             'name' => 'updated company #1',
             'email' => 'other@company1.com',
             'logo' => 'updated_LOGO?',
@@ -150,12 +164,12 @@ class CompaniesTest extends TestCase
         $this
             ->actingAsAdmin()
             ->delete(route('company.destroy', $company->id))
-            ->assertRedirect(route('company.index'))
-            ->assertSessionHas('success');
+            ->followRedirects()
+            ->seeRouteIs('company.index')
+            ->seeText('Company deleted');
 
-        $this->assertDatabaseMissing('companies', [
-            'id' => 'updated company #1',
-            $company->id
+        $this->dontSeeInDatabase('companies', [
+            'id' => $company->id
         ]);
     }
 }
