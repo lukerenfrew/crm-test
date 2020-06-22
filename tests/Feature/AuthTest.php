@@ -6,14 +6,29 @@ use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
-class LoginTest extends TestCase
+class AuthTest extends TestCase
 {
     use DatabaseMigrations;
+
 
     /**
      * @test
      */
-    public function can_login_as_admin()
+    public function cant_register_as_a_new_user()
+    {
+        $this
+            ->get('/register')
+            ->assertStatus(404);
+
+        $this
+            ->post('/register')
+            ->assertStatus(404);
+    }
+
+    /**
+     * @test
+     */
+    public function can_login_as_a_user()
     {
         $user = factory(User::class)->create([
             'email' => 'admin@admin.com',
@@ -27,6 +42,14 @@ class LoginTest extends TestCase
 
         $response->assertRedirect('/home');
         $this->assertAuthenticatedAs($user);
+    }
+
+    /**
+     * @test
+     */
+    public function can_login_with_remember_token()
+    {
+
     }
 
     /**
@@ -52,5 +75,21 @@ class LoginTest extends TestCase
         $response->assertSessionHasErrors('email');
         $this->assertEquals('admin@admin.com', session()->getOldInput('email'));
         $this->assertFalse(session()->hasOldInput('password'));
+    }
+
+    /**
+     * @test
+     */
+    public function can_request_password_reset()
+    {
+
+    }
+
+    /**
+     * @test
+     */
+    public function can_reset_password()
+    {
+
     }
 }
