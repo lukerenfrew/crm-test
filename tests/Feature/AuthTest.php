@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\User;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -35,21 +37,13 @@ class AuthTest extends TestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->post('/login', [
+        $response = $this->post(route('login'), [
             'email' => 'admin@admin.com',
             'password' => 'password',
         ]);
 
-        $response->assertRedirect('/home');
+        $response->assertRedirect('/');
         $this->assertAuthenticatedAs($user);
-    }
-
-    /**
-     * @test
-     */
-    public function can_login_with_remember_token()
-    {
-
     }
 
     /**
@@ -63,13 +57,13 @@ class AuthTest extends TestCase
         ]);
 
         $response = $this
-            ->from('/login')
-            ->post('/login', [
+            ->from(route('login'))
+            ->post(route('login'), [
                 'email' => 'admin@admin.com',
                 'password' => 'invalid_password',
             ]);
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('login'));
         $this->assertGuest();
 
         $response->assertSessionHasErrors('email');
@@ -82,7 +76,22 @@ class AuthTest extends TestCase
      */
     public function can_request_password_reset()
     {
+        $user = factory(User::class)->create([
+            'email' => 'admin@admin.com',
+            'password' => bcrypt('password'),
+        ]);
 
+        Notification::fake();
+
+        $response = $this
+            ->from(route('password.request'))
+            ->post(route('password.email'), [
+                'email' => 'admin@admin.com',
+            ]);
+
+        $response->assertRedirect(route('password.request'));
+
+        Notification::assertSentTo($user, ResetPassword::class);
     }
 
     /**
@@ -90,6 +99,22 @@ class AuthTest extends TestCase
      */
     public function can_reset_password()
     {
+        factory(User::class)->create([
+            'email' => 'admin@admin.com',
+            'password' => bcrypt('password'),
+        ]);
 
+        $this->post(route('password.email'), [
+            'email' => 'admin@admin.com',
+        ]);
+
+        $response = $this->post(route('password.update'), [
+            'email' => 'admin@admin.com',
+            'password' => 'new_password',
+            'password_confirmation' => 'new_password',
+            'token' => 'TOKEN'
+        ]);
+
+        $response->assertRedirect('/');
     }
 }
