@@ -27,7 +27,7 @@ class CompanyController extends Controller
     {
         Company::create($request->validated());
 
-        session()->flash('success', 'Company created');
+        flash('Company created')->success();
 
         return redirect()->route('company.index');
     }
@@ -50,16 +50,17 @@ class CompanyController extends Controller
     {
         $company->update($request->validated());
 
-        session()->flash('success', 'Company updated');
+        flash('Company updated')->success();
 
-        return redirect()->route('company.index');
+        return redirect()
+            ->route('company.index');
     }
 
     public function destroy(Company $company): RedirectResponse
     {
         $company->delete();
 
-        session()->flash('success', 'Company deleted');
+        flash('Company deleted')->success();
 
         return redirect()->route('company.index');
     }

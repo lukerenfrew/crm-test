@@ -8,13 +8,6 @@
 
 @section('content')
 
-    @if(session()->has('success'))
-        <div class="callout callout-success">
-            <h4>Success</h4>
-            <p>{{session()->get('success')}}</p>
-        </div>
-    @endif
-
     <a class="btn btn-primary" href="{{route('company.create')}}">Create</a>
     <hr/>
 

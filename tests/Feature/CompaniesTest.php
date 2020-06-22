@@ -132,6 +132,10 @@ class CompaniesTest extends TestCase
         $this
             ->actingAsAdmin()
             ->visitRoute('company.edit', $company->id)
+            ->seeInField('name','company #1')
+            ->seeInField('email','admin@company1.com')
+            ->seeInField('logo','LOGO?')
+            ->seeInField('website','http://www.company1.com')
             ->submitForm('Update', [
                 'name' => 'updated company #1',
                 'email' => 'other@company1.com',
