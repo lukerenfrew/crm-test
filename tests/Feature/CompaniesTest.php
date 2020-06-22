@@ -2,15 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Company;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class CompaniesTest extends TestCase
 {
     use DatabaseMigrations;
-
 
     /**
      * @test
@@ -44,7 +43,24 @@ class CompaniesTest extends TestCase
      */
     public function can_view_all_companies()
     {
-        $this->actingAs(factory(User::class)->create());
+        $this->actingAsAdmin();
+
+        factory(Company::class)->create([
+            'name' => 'company #1',
+            'email' => 'admin@company1.com',
+            'logo' => 'LOGO?',
+            'website' => 'http://www.company1.com',
+        ]);
+
+        factory(Company::class)->create([
+            'name' => 'company #2',
+            'email' => 'admin@company2.com',
+            'logo' => 'LOGO?',
+            'website' => 'http://www.company2.com',
+        ]);
+
+        $this->get(route('company.index'))
+            ->assertViewHas(['companies']);
     }
 
     /**
@@ -52,7 +68,16 @@ class CompaniesTest extends TestCase
      */
     public function can_view_a_company()
     {
+        $company = factory(Company::class)->create([
+            'name' => 'company #1',
+            'email' => 'admin@company1.com',
+            'logo' => 'LOGO?',
+            'website' => 'http://www.company1.com',
+        ]);
 
+        $this->actingAsAdmin()
+            ->get(route('company.show', $company->id))
+            ->assertViewHas('company', $company);
     }
 
     /**
@@ -60,15 +85,54 @@ class CompaniesTest extends TestCase
      */
     public function can_create_a_company()
     {
+        $this
+            ->actingAsAdmin()
+            ->post(route('company.store'), [
+                'name' => 'company #1',
+                'email' => 'admin@company1.com',
+                'logo' => 'LOGO?',
+                'website' => 'http://www.company1.com',
+            ])
+            ->assertRedirect(route('company.index'))
+            ->assertSessionHas('success');
 
+        $this->assertDatabaseHas('companies', [
+            'name' => 'company #1',
+            'email' => 'admin@company1.com',
+            'logo' => 'LOGO?',
+            'website' => 'http://www.company1.com',
+        ]);
     }
 
     /**
      * @test
      */
-    public function can_create_update_company()
+    public function can_update_company()
     {
+        $company = factory(Company::class)->create([
+            'name' => 'company #1',
+            'email' => 'admin@company1.com',
+            'logo' => 'LOGO?',
+            'website' => 'http://www.company1.com',
+        ]);
 
+        $this
+            ->actingAsAdmin()
+            ->put(route('company.update', $company->id), [
+                'name' => 'updated company #1',
+                'email' => 'other@company1.com',
+                'logo' => 'updated_LOGO?',
+                'website' => 'http://www.company1.co.uk',
+            ])
+            ->assertRedirect(route('company.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('companies', [
+            'name' => 'updated company #1',
+            'email' => 'other@company1.com',
+            'logo' => 'updated_LOGO?',
+            'website' => 'http://www.company1.co.uk',
+        ]);
     }
 
     /**
@@ -76,6 +140,22 @@ class CompaniesTest extends TestCase
      */
     public function can_delete_a_company()
     {
+        $company = factory(Company::class)->create([
+            'name' => 'company #1',
+            'email' => 'admin@company1.com',
+            'logo' => 'LOGO?',
+            'website' => 'http://www.company1.com',
+        ]);
 
+        $this
+            ->actingAsAdmin()
+            ->delete(route('company.destroy', $company->id))
+            ->assertRedirect(route('company.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('companies', [
+            'id' => 'updated company #1',
+            $company->id
+        ]);
     }
 }
