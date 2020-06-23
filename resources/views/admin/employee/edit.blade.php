@@ -7,10 +7,8 @@
 @stop
 
 @section('content')
-
     <a class="btn btn-primary" href="{{route('employee.index')}}">Back</a>
     <hr/>
-
     <form class="form-horizontal" action="{{route('employee.update', $employee)}}" enctype="multipart/form-data" method="POST">
         @method('patch')
         @include('admin.employee.form')

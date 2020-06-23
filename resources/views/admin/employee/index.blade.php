@@ -7,10 +7,8 @@
 @stop
 
 @section('content')
-
     <a class="btn btn-primary" href="{{route('employee.create')}}">Create</a>
     <hr/>
-
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
@@ -36,7 +34,6 @@
                 </td>
             </tr>
         @endforeach
-
         </tbody>
     </table>
     {{ $employees->links() }}

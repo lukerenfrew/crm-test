@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">Phone number</label>
+        <label for="phone" class="col-sm-2 control-label">Phone number</label>
         <div class="col-sm-10">
             <input type="text" class="form-control" name="phone" placeholder="Phone number"
                    value="{{$employee->phone ?? ''}}">
@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">Company</label>
+        <label for="company" class="col-sm-2 control-label">Company</label>
         <div class="col-sm-10">
 
             <select class="form-control" name="company">
@@ -59,5 +59,4 @@
             @endif
         </div>
     </div>
-
 </div>

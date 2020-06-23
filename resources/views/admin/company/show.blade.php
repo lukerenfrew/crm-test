@@ -7,11 +7,9 @@
 @stop
 
 @section('content')
-
     <a class="btn btn-primary" href="{{url()->previous()}}">Back</a>
     <a class="btn btn-primary" href="{{route('company.edit', $company)}}">Edit</a>
     <hr/>
-
     <div>
         <table class="table table-bordered">
             <thead>
@@ -36,7 +34,5 @@
             </tr>
             </tbody>
         </table>
-
     </div>
-
 @stop

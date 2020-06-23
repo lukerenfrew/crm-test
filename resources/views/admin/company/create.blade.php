@@ -7,10 +7,8 @@
 @stop
 
 @section('content')
-
     <a class="btn btn-primary" href="{{url()->previous()}}">Back</a>
     <hr/>
-
     <form class="form-horizontal" action="{{route('company.store')}}" method="POST" enctype="multipart/form-data">
         @include('admin.company.form')
         @csrf
