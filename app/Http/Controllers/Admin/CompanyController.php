@@ -15,7 +15,7 @@ class CompanyController extends Controller
     public function index(): View
     {
         return view('admin.company.index', [
-            'companies' => Company::paginate(10)
+            'companies' => Company::paginate(10),
         ]);
     }
 
@@ -46,14 +46,14 @@ class CompanyController extends Controller
 
         return view('admin.company.show', [
             'company' => $company,
-            'employees' => $employees
+            'employees' => $employees,
         ]);
     }
 
     public function edit(Company $company): View
     {
         return view('admin.company.edit', [
-            'company' => $company
+            'company' => $company,
         ]);
     }
 

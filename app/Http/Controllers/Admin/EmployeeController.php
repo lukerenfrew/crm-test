@@ -22,7 +22,7 @@ class EmployeeController extends Controller
     public function create(): View
     {
         return view('admin.employee.create', [
-            'companies' => Company::all()
+            'companies' => Company::all(),
         ]);
     }
 
@@ -42,7 +42,7 @@ class EmployeeController extends Controller
     public function show(Employee $employee): View
     {
         return view('admin.employee.show', [
-            'employee' => $employee
+            'employee' => $employee,
         ]);
     }
 
@@ -50,7 +50,7 @@ class EmployeeController extends Controller
     {
         return view('admin.employee.edit', [
             'employee' => $employee,
-            'companies' => Company::all()
+            'companies' => Company::all(),
         ]);
     }
 
