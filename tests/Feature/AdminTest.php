@@ -15,7 +15,9 @@ class AdminTest extends TestCase
      */
     public function cannot_access_admin_panel_unless_authenticated()
     {
-        $this->get('/admin')->assertRedirect(route('login'));
+        $this
+            ->visitRoute('admin.dashboard')
+            ->seeRouteIs('login');
     }
 
     /**
@@ -23,10 +25,8 @@ class AdminTest extends TestCase
      */
     public function can_access_admin_panel_when_authenticated()
     {
-        $user = factory(User::class)->create();
-
-        $this->actingAs($user)
-            ->get('/admin')
-            ->assertOk();
+        $this->actingAsAdmin()
+            ->visitRoute('admin.dashboard')
+            ->assertResponseOk();
     }
 }

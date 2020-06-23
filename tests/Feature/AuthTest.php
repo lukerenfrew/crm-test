@@ -5,7 +5,11 @@ namespace Tests\Feature;
 use App\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -20,11 +24,11 @@ class AuthTest extends TestCase
     {
         $this
             ->get('/register')
-            ->assertStatus(404);
+            ->seeStatusCode(Response::HTTP_NOT_FOUND);
 
         $this
             ->post('/register')
-            ->assertStatus(404);
+            ->seeStatusCode(Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -37,13 +41,13 @@ class AuthTest extends TestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->post(route('login'), [
-            'email' => 'admin@admin.com',
-            'password' => 'password',
-        ]);
-
-        $response->assertRedirect('/');
-        $this->assertAuthenticatedAs($user);
+        $this->visitRoute('login')
+            ->submitForm('Sign In', [
+                'email' => 'admin@admin.com',
+                'password' => 'password',
+            ])
+            ->seeRouteIs('admin.dashboard')
+            ->seeIsAuthenticatedAs($user);
     }
 
     /**
@@ -56,19 +60,17 @@ class AuthTest extends TestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this
-            ->from(route('login'))
-            ->post(route('login'), [
+        $this
+            ->visitRoute('login')
+            ->submitForm('Sign In', [
                 'email' => 'admin@admin.com',
                 'password' => 'invalid_password',
-            ]);
-
-        $response->assertRedirect(route('login'));
-        $this->assertGuest();
-
-        $response->assertSessionHasErrors('email');
-        $this->assertEquals('admin@admin.com', session()->getOldInput('email'));
-        $this->assertFalse(session()->hasOldInput('password'));
+            ])
+            ->seeRouteIs('login')
+            ->dontSeeIsAuthenticated()
+            ->seeText('These credentials do not match our records.')
+            ->seeInField('email', 'admin@admin.com')
+            ->seeInField('password', '');
     }
 
     /**
@@ -83,13 +85,13 @@ class AuthTest extends TestCase
 
         Notification::fake();
 
-        $response = $this
-            ->from(route('password.request'))
-            ->post(route('password.email'), [
+        $this
+            ->visitRoute('password.request')
+            ->submitForm('Send Password Reset Link', [
                 'email' => 'admin@admin.com',
-            ]);
-
-        $response->assertRedirect(route('password.request'));
+            ])
+            ->seeRouteIs('password.request')
+            ->seeText('We have emailed your password reset link!');
 
         Notification::assertSentTo($user, ResetPassword::class);
     }
@@ -97,24 +99,51 @@ class AuthTest extends TestCase
     /**
      * @test
      */
-    public function can_reset_password()
+    public function email_is_required_for_password_reset()
     {
-        factory(User::class)->create([
+        $this
+            ->visitRoute('password.request')
+            ->submitForm('Send Password Reset Link', [
+                'email' => '',
+            ])
+            ->seeRouteIs('password.request')
+            ->seeText('The email field is required.');
+    }
+
+    /**
+     * @test
+     */
+    public function can_reset_a_password()
+    {
+
+        $user = factory(User::class)->create([
             'email' => 'admin@admin.com',
             'password' => bcrypt('password'),
         ]);
 
-        $this->post(route('password.email'), [
-            'email' => 'admin@admin.com',
-        ]);
+        Notification::fake();
 
-        $response = $this->post(route('password.update'), [
-            'email' => 'admin@admin.com',
-            'password' => 'new_password',
-            'password_confirmation' => 'new_password',
-            'token' => 'TOKEN'
-        ]);
+        $this
+            ->visitRoute('password.request')
+            ->submitForm('Send Password Reset Link', [
+                'email' => 'admin@admin.com',
+            ])
+            ->seeRouteIs('password.request')
+            ->seeText('We have emailed your password reset link!');
 
-        $response->assertRedirect('/');
+        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use (&$token) {
+            $token = $notification->token;
+            return true;
+        });
+
+        $this
+            ->visitRoute('password.reset', $token)
+            ->submitForm('Reset Password', [
+                'email' => 'admin@admin.com',
+                'password' => 'new_password',
+                'password_confirmation' => 'new_password',
+                'token' => $token
+            ])
+            ->seeRouteIs('admin.dashboard');
     }
 }
