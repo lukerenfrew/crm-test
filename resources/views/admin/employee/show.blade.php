@@ -3,13 +3,13 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Company: {{$company->name}}</h1>
+    <h1>Employee: {{$employee->fullName}}</h1>
 @stop
 
 @section('content')
 
     <a class="btn btn-primary" href="{{url()->previous()}}">Back</a>
-    <a class="btn btn-primary" href="{{route('company.edit', $company)}}">Edit</a>
+    <a class="btn btn-primary" href="{{route('employee.edit', $employee)}}">Edit</a>
     <hr/>
 
     <div>
@@ -18,21 +18,19 @@
             <tbody>
             <tr>
                 <th>Name:</th>
-                <td>{{$company->name}}</td>
+                <td>{{$employee->fullName}}</td>
             </tr>
             <tr>
                 <th>Email:</th>
-                <td>{{$company->email}}</td>
+                <td>{{$employee->email}}</td>
             </tr>
             <tr>
-                <th>Website:</th>
-                <td>{{$company->website}}</td>
+                <th>Phone:</th>
+                <td><a href="tel:{{$employee->phone}}">{{$employee->phone}}</a></td>
             </tr>
             <tr>
                 <th>Company:</th>
-                <td><img width="100px" src="{{$company->logoUrl}}" alt="{{$company->name}} logo"/></td>
-            </tr>
-            <tr>
+                <td><a href="{{route('company.show', $employee->company)}}">{{$employee->company->name}}</a></td>
             </tr>
             </tbody>
         </table>

@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">Email</label>
+        <label for="email" class="col-sm-2 control-label">Email</label>
         <div class="col-sm-10">
             <input type="email" class="form-control" name="email" placeholder="Email" value="{{$company->email ?? ''}}">
             @if($errors->has('email'))
@@ -18,7 +18,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">Website</label>
+        <label for="website" class="col-sm-2 control-label">Website</label>
         <div class="col-sm-10">
             <input type="text" class="form-control" name="website" placeholder="Website"
                    value="{{$company->website ?? ''}}">
@@ -28,7 +28,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">Logo</label>
+        <label for="logo" class="col-sm-2 control-label">Logo</label>
         <div class="col-sm-10">
             @if(isset($company))
                 <img width="100px" src="{{$company->logoUrl}}" alt="{{$company->name}} logo"/>
