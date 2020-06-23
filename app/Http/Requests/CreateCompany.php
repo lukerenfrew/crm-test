@@ -17,9 +17,8 @@ class CreateCompany extends FormRequest
     {
         return [
             'name' => ['required'],
-            'email' => ['required'],
-            'logo' => ['required', 'image', 'dimensions:min_width=100,min_height=100'],
-            'website' => ['required'],
+            'email' => ['email'],
+            'logo' => ['image', 'dimensions:min_width=100,min_height=100'],
         ];
     }
 }

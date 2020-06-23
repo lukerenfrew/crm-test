@@ -24,7 +24,13 @@
             </tr>
             <tr>
                 <th>Phone:</th>
-                <td><a href="tel:{{$employee->phone}}">{{$employee->phone}}</a></td>
+                <td>
+                    @if($employee->phone)
+                        <a href="tel:{{$employee->phone}}">{{$employee->phone}}</a>
+                    @else
+                        N/A
+                    @endif
+                </td>
             </tr>
             <tr>
                 <th>Company:</th>

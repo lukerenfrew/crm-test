@@ -185,15 +185,14 @@ class CompaniesTest extends TestCase
             ->visitRoute('company.create')
             ->submitForm('Create', [
                 'name' => '',
-                'email' => '',
-                'logo' => '',
+                'email' => 'invalid',
+                'logo' => UploadedFile::fake()->image('logo2.jpg', 10, 100),
                 'website' => '',
             ])
             ->seeRouteIs('company.create')
             ->seeText('Name field is required')
-            ->seeText('Email field is required')
-            ->seeText('Logo field is required')
-            ->seeText('Website field is required')
+            ->seeText('The logo has invalid image dimensions')
+            ->seeText('The email must be a valid email address')
             ->dontSeeText('Company created')
             ->assertEmpty(Company::get());
     }
@@ -279,18 +278,16 @@ class CompaniesTest extends TestCase
             ->visitRoute('company.edit', $company->id)
             ->submitForm('Update', [
                 'name' => '',
-                'email' => '',
-                'logo' => '',
+                'email' => 'invalid',
+                'logo' => UploadedFile::fake()->image('logo2.jpg', 10, 100),
                 'website' => '',
             ])
             ->seeRouteIs('company.edit', $company->id)
             ->seeText('Name field is required')
-            ->seeText('Email field is required')
-            ->dontSeeText('Logo field is required')
-            ->seeText('Website field is required')
+            ->seeText('The logo has invalid image dimensions')
+            ->seeText('The email must be a valid email address')
             ->dontSeeText('Company updated');
     }
-
 
     /**
      * @test

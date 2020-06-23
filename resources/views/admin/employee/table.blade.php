@@ -9,11 +9,17 @@
     </tr>
     </thead>
     <tbody>
-    @foreach($employees as $employee)
+    @forelse($employees as $employee)
         <tr>
             <td><a href="{{route('employee.show', $employee)}}">{{$employee->fullName}}</a></td>
             <td>{{$employee->email}}</td>
-            <td><a href="tel:{{$employee->phone}}">{{$employee->phone}}</a></td>
+            <td>
+                @if($employee->phone)
+                    <a href="tel:{{$employee->phone}}">{{$employee->phone}}</a>
+                @else
+                    N/A
+                @endif
+            </td>
             <td>
                 <a href="{{route('company.show', $employee->company)}}">{{$employee->company->name}}</a>
             </td>

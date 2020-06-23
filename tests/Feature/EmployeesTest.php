@@ -165,14 +165,13 @@ class EmployeesTest extends TestCase
                 'firstname' => '',
                 'surname' => '',
                 'phone' => '',
-                'email' => ''
+                'email' => 'invalid'
             ])
             ->seeRouteIs('employee.create')
             ->seeText('The first name field is required')
             ->seeText('The last name field is required')
-            ->seeText('The email field is required')
-            ->seeText('The phone field is required')
-            ->seeText(' The selected company is invalid')
+            ->seeText('The email must be a valid email address')
+            ->seeText('The selected company is invalid')
             ->dontSeeText('Employee created')
             ->assertEmpty(Employee::get());
     }
@@ -238,14 +237,13 @@ class EmployeesTest extends TestCase
             ->submitForm('Update', [
                 'firstname' => '',
                 'surname' => '',
-                'email' => '',
+                'email' => 'invalid',
                 'phone' => '',
             ])
             ->seeRouteIs('employee.edit', $employee->id)
             ->seeText('The first name field is required')
             ->seeText('The last name field is required')
-            ->seeText('The email field is required')
-            ->seeText('The phone field is required')
+            ->seeText('The email must be a valid email address')
             ->dontSeeText('Employee updated');
     }
 

@@ -17,9 +17,8 @@ class UpdateCompany extends FormRequest
     {
         return [
             'name' => ['required'],
-            'email' => ['required'],
+            'email' => ['email'],
             'logo' => ['image', 'dimensions:min_width=100,min_height=100'],
-            'website' => ['required'],
         ];
     }
 }

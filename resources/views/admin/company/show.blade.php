@@ -24,11 +24,17 @@
             </tr>
             <tr>
                 <th>Website:</th>
-                <td>{{$company->website}}</td>
+                <td>{{$company->website ?? 'N/A'}}</td>
             </tr>
             <tr>
                 <th>Company:</th>
-                <td><img width="100px" src="{{$company->logoUrl}}" alt="{{$company->name}} logo"/></td>
+                <td>
+                    @if($company->logo)
+                        <img width="100px" src="{{$company->logoUrl}}" alt="{{$company->name}} logo"/>
+                    @else
+                        N/A
+                    @endif
+                </td>
             </tr>
             <tr>
             </tr>
@@ -36,7 +42,11 @@
         </table>
     </div>
 
-    <h4>Employees</h4>
+    <h3>Employees</h3>
 
-    @include('admin.employee.table', ['employees' => $employees])
+    @if($employees->isEmpty())
+        <h6>No Employees</h6>
+    @else
+        @include('admin.employee.table', ['employees' => $employees])
+    @endif
 @stop

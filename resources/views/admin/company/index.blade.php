@@ -26,8 +26,14 @@
             <tr>
                 <td><a href="{{route('company.show', $company)}}">{{$company->name}}</a></td>
                 <td>{{$company->email}}</td>
-                <td>{{$company->website}}</td>
-                <td><img width="100px" src="{{$company->logoUrl}}" alt="{{$company->name}} logo"/></td>
+                <td>{{$company->website ?? 'N/A'}}</td>
+                <td>
+                    @if($company->logo)
+                        <img width="100px" src="{{$company->logoUrl}}" alt="{{$company->name}} logo"/>
+                    @else
+                        N/A
+                    @endif
+                </td>
                 <td>
                     <a class="btn btn-secondary" href="{{route('company.edit', $company)}}">Edit</a>
                     <a class="btn btn-secondary" href="{{route('company.destroy', $company)}}">Delete</a>

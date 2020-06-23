@@ -18,9 +18,8 @@ class UpdateEmployee extends FormRequest
         return [
             'firstname' => ['required'],
             'surname' => ['required'],
-            'email' => ['required'],
-            'phone' => ['required'],
-            'company' => ['required', Rule::in(Company::pluck('id')),],
+            'email' => ['email'],
+            'company' => [Rule::in(Company::pluck('id')),],
         ];
     }
 
