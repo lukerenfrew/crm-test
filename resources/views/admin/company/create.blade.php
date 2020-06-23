@@ -11,7 +11,7 @@
     <a class="btn btn-primary" href="{{route('company.index')}}">Back</a>
     <hr/>
 
-    <form class="form-horizontal" action="{{route('company.store')}}" method="POST">
+    <form class="form-horizontal" action="{{route('company.store')}}" method="POST" enctype="multipart/form-data">
         @include('admin.company.form')
         @csrf
         <div class="box-footer">

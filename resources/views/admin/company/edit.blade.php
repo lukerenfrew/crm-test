@@ -11,7 +11,8 @@
     <a class="btn btn-primary" href="{{route('company.index')}}">Back</a>
     <hr/>
 
-    <form class="form-horizontal" action="{{route('company.update', $company)}}" method="PUT">
+    <form class="form-horizontal" action="{{route('company.update', $company)}}" enctype="multipart/form-data" method="POST">
+        @method('patch')
         @include('admin.company.form')
         @csrf
         <div class="box-footer">

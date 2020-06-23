@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Company;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CompaniesTest extends TestCase
@@ -50,25 +52,25 @@ class CompaniesTest extends TestCase
         factory(Company::class)->create([
             'name' => 'company #1',
             'email' => 'admin@company1.com',
-            'logo' => 'LOGO?',
+            'logo' => 'logo1.jpg',
             'website' => 'http://www.company1.com',
         ]);
 
         factory(Company::class)->create([
             'name' => 'company #2',
             'email' => 'admin@company2.com',
-            'logo' => 'LOGO2?',
+            'logo' => 'logo2.jpg',
             'website' => 'http://www.company2.com',
         ]);
 
         $this->visitRoute('company.index')
             ->see('company #1')
             ->see('admin@company1.com')
-            ->see('LOGO?')
+            ->seeElement('img', ['src' => 'logo1.jpg'])
             ->see('http://www.company1.com')
             ->see('company #2')
             ->see('admin@company2.com')
-            ->see('LOGO2?')
+            ->seeElement('img', ['src' => 'logo2.jpg'])
             ->see('http://www.company2.com');
     }
 
@@ -98,7 +100,7 @@ class CompaniesTest extends TestCase
         $company = factory(Company::class)->create([
             'name' => 'company #1',
             'email' => 'admin@company1.com',
-            'logo' => 'LOGO?',
+            'logo' => 'logo1.jpg',
             'website' => 'http://www.company1.com',
         ]);
 
@@ -106,7 +108,7 @@ class CompaniesTest extends TestCase
             ->visitRoute('company.show', $company->id)
             ->see('company #1')
             ->see('admin@company1.com')
-            ->see('LOGO?')
+            ->seeElement('img', ['src' => 'logo1.jpg'])
             ->see('http://www.company1.com');
     }
 
@@ -115,24 +117,54 @@ class CompaniesTest extends TestCase
      */
     public function can_create_a_company()
     {
+        Storage::fake('logos');
+
+        $logoFile = UploadedFile::fake()->image('logo.jpg', 100, 100);
+
         $this
             ->actingAsAdmin()
             ->visitRoute('company.create')
-            ->submitForm('Create', [
-                'name' => 'company #1',
-                'email' => 'admin@company1.com',
-                'logo' => 'LOGO?',
-                'website' => 'http://www.company1.com',
-            ])
+            ->submitForm('Create',
+                [
+                    'name' => 'company #1',
+                    'email' => 'admin@company1.com',
+                    'website' => 'http://www.company1.com',
+                    'logo' => $logoFile
+                ]
+            )
             ->seeRouteIs('company.index')
             ->seeText('Company created');
 
         $this->seeInDatabase('companies', [
             'name' => 'company #1',
             'email' => 'admin@company1.com',
-            'logo' => 'LOGO?',
             'website' => 'http://www.company1.com',
         ]);
+    }
+
+    /**
+     * @test
+     */
+    public function can_upload_a_logo()
+    {
+        Storage::fake('logos');
+        $logoFile = UploadedFile::fake()->image('logo.jpg', 100, 100);
+
+        $this->actingAsAdmin()
+            ->json('post', route('company.store'), [
+                'name' => 'company #1',
+                'email' => 'admin@company1.com',
+                'website' => 'http://www.company1.com',
+                'logo' => $logoFile
+            ])
+            ->seeInDatabase('companies', [
+                'name' => 'company #1',
+                'email' => 'admin@company1.com',
+                'logo' => $logoFile->hashName(),
+                'website' => 'http://www.company1.com',
+            ]);
+
+        Storage::disk('logos')->assertExists($logoFile->hashName());
     }
 
     /**
@@ -163,10 +195,13 @@ class CompaniesTest extends TestCase
      */
     public function can_update_company()
     {
+        Storage::fake('logos');
+        $logoFile = UploadedFile::fake()->image('logo2.jpg', 100, 100);
+
         $company = factory(Company::class)->create([
             'name' => 'company #1',
             'email' => 'admin@company1.com',
-            'logo' => 'LOGO?',
+            'logo' => 'logo.jpg',
             'website' => 'http://www.company1.com',
         ]);
 
@@ -175,12 +210,12 @@ class CompaniesTest extends TestCase
             ->visitRoute('company.edit', $company->id)
             ->seeInField('name', 'company #1')
             ->seeInField('email', 'admin@company1.com')
-            ->seeInField('logo', 'LOGO?')
             ->seeInField('website', 'http://www.company1.com')
+            ->seeElement('img', ['src' => 'logo.jpg'])
             ->submitForm('Update', [
                 'name' => 'updated company #1',
                 'email' => 'other@company1.com',
-                'logo' => 'updated_LOGO?',
+                'logo' => $logoFile,
                 'website' => 'http://www.company1.co.uk',
             ])
             ->seeRouteIs('company.index')
@@ -189,9 +224,40 @@ class CompaniesTest extends TestCase
         $this->seeInDatabase('companies', [
             'name' => 'updated company #1',
             'email' => 'other@company1.com',
-            'logo' => 'updated_LOGO?',
             'website' => 'http://www.company1.co.uk',
         ]);
+    }
+
+    /**
+     * @test
+     */
+    public function can_update_company_logo()
+    {
+        Storage::fake('logos');
+        $logoFile = UploadedFile::fake()->image('logo2.jpg', 100, 100);
+
+        $company = factory(Company::class)->create([
+            'name' => 'company #1',
+            'email' => 'admin@company1.com',
+            'logo' => 'logo.jpg',
+            'website' => 'http://www.company1.com',
+        ]);
+
+        $this->actingAsAdmin()
+            ->json('patch', route('company.update', $company->id), [
+                'name' => 'company #1',
+                'email' => 'admin@company1.com',
+                'website' => 'http://www.company1.com',
+                'logo' => $logoFile
+            ])
+            ->seeInDatabase('companies', [
+                'name' => 'company #1',
+                'email' => 'admin@company1.com',
+                'logo' => $logoFile->hashName(),
+                'website' => 'http://www.company1.com',
+            ]);
+
+        Storage::disk('logos')->assertExists($logoFile->hashName());
     }
 
     /**
@@ -213,8 +279,32 @@ class CompaniesTest extends TestCase
             ->seeRouteIs('company.edit', $company->id)
             ->seeText('Name field is required')
             ->seeText('Email field is required')
-            ->seeText('Logo field is required')
+            ->dontSeeText('Logo field is required')
             ->seeText('Website field is required')
+            ->dontSeeText('Company updated');
+    }
+
+
+    /**
+     * @test
+     */
+    public function logo_is_only_validated_if_a_new_file_is_uploaded()
+    {
+        $company = factory(Company::class)->create();
+
+        $logoFile = UploadedFile::fake()->image('logo2.jpg', 10, 10);
+
+        $this
+            ->actingAsAdmin()
+            ->visitRoute('company.edit', $company->id)
+            ->submitForm('Update', [
+                'name' => 'company #1',
+                'email' => 'admin@company1.com',
+                'website' => 'http://www.company1.com',
+                'logo' => $logoFile
+            ])
+            ->seeRouteIs('company.edit', $company->id)
+            ->seeText('The logo has invalid image dimensions')
             ->dontSeeText('Company updated');
     }
 

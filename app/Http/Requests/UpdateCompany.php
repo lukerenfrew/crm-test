@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCompany extends FormRequest
 {
+    use UploadsLogo;
+
     public function authorize(): bool
     {
         return $this->user() !== null;
@@ -16,7 +18,7 @@ class UpdateCompany extends FormRequest
         return [
             'name' => ['required'],
             'email' => ['required'],
-            'logo' => ['required'],
+            'logo' => ['image', 'dimensions:min_width=100,min_height=100'],
             'website' => ['required'],
         ];
     }

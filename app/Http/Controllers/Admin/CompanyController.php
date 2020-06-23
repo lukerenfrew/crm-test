@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCompany;
 use App\Http\Requests\UpdateCompany;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class CompanyController extends Controller
@@ -25,7 +26,7 @@ class CompanyController extends Controller
 
     public function store(CreateCompany $request)
     {
-        Company::create($request->validated());
+        Company::create($request->validatedWithLogo());
 
         flash('Company created')->success();
 
@@ -48,7 +49,7 @@ class CompanyController extends Controller
 
     public function update(UpdateCompany $request, Company $company): RedirectResponse
     {
-        $company->update($request->validated());
+        $company->update($request->validatedWithLogo());
 
         flash('Company updated')->success();
 
