@@ -26,7 +26,7 @@ class EmployeeController extends Controller
         ]);
     }
 
-    public function store(CreateEmployee $request)
+    public function store(CreateEmployee $request): RedirectResponse
     {
         Employee::make($request->only('firstname', 'surname', 'email', 'phone'))
             ->employedBy(Company::findOrFail($request->get('company')))
@@ -34,7 +34,9 @@ class EmployeeController extends Controller
 
         flash('Employee created')->success();
 
-        return redirect()->route('employee.index');
+        return redirect()
+            ->route('employee.index')
+            ->withInput();
     }
 
     public function show(Employee $employee): View
@@ -61,7 +63,8 @@ class EmployeeController extends Controller
         flash('Employee updated')->success();
 
         return redirect()
-            ->route('employee.index');
+            ->route('employee.index')
+            ->withInput();
     }
 
     public function destroy(Employee $employee): RedirectResponse

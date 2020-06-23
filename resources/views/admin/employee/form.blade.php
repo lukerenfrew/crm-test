@@ -2,40 +2,60 @@
     <div class="form-group">
         <label for="name" class="col-sm-2 control-label">First name</label>
         <div class="col-sm-10">
-            <input type="name" class="form-control" name="firstname" placeholder="Firstname"
+            <input type="name" class="form-control  {{ $errors->has('firstname') ? 'is-invalid' : '' }}"
+                   name="firstname" placeholder="Firstname"
                    value="{{$employee->firstname ?? ''}}">
             @if($errors->has('firstname'))
-                {{$errors->first('firstname')}}
+                <div class="invalid-feedback">
+                    <strong>
+                        {{$errors->first('firstname')}}
+                    </strong>
+                </div>
             @endif
         </div>
     </div>
     <div class="form-group">
         <label for="surname" class="col-sm-2 control-label">Last name</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" name="surname" placeholder="Last name"
+            <input type="text" class="form-control  {{ $errors->has('surname') ? 'is-invalid' : '' }}" name="surname"
+                   placeholder="Last name"
                    value="{{$employee->surname ?? ''}}">
             @if($errors->has('surname'))
-                {{$errors->first('surname')}}
+                <div class="invalid-feedback">
+                    <strong>
+                        {{$errors->first('surname')}}
+                    </strong>
+                </div>
             @endif
         </div>
     </div>
     <div class="form-group">
         <label for="email" class="col-sm-2 control-label">Email</label>
         <div class="col-sm-10">
-            <input type="email" class="form-control" name="email" placeholder="Email"
+            <input type="email" class="form-control  {{ $errors->has('email') ? 'is-invalid' : '' }}" name="email"
+                   placeholder="Email"
                    value="{{$employee->email ?? ''}}">
             @if($errors->has('email'))
-                {{$errors->first('email')}}
+                <div class="invalid-feedback">
+                    <strong>
+                        {{$errors->first('email')}}
+                    </strong>
+                </div>
             @endif
         </div>
     </div>
     <div class="form-group">
         <label for="phone" class="col-sm-2 control-label">Phone number</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" name="phone" placeholder="Phone number"
+            <input type="text" class="form-control  {{ $errors->has('phone') ? 'is-invalid' : '' }}" name="phone"
+                   placeholder="Phone number"
                    value="{{$employee->phone ?? ''}}">
             @if($errors->has('phone'))
-                {{$errors->first('phone')}}
+                <div class="invalid-feedback">
+                    <strong>
+                        {{$errors->first('phone')}}
+                    </strong>
+                </div>
             @endif
         </div>
     </div>
@@ -43,7 +63,7 @@
         <label for="company" class="col-sm-2 control-label">Company</label>
         <div class="col-sm-10">
 
-            <select class="form-control" name="company">
+            <select class="form-control  {{ $errors->has('company') ? 'is-invalid' : '' }}" name="company">
                 <option>Select company</option>
                 @foreach($companies as $company)
                     <option
@@ -55,7 +75,11 @@
                 @endforeach
             </select>
             @if($errors->has('company'))
-                {{$errors->first('company')}}
+                <div class="invalid-feedback">
+                    <strong>
+                        {{$errors->first('company')}}
+                    </strong>
+                </div>
             @endif
         </div>
     </div>

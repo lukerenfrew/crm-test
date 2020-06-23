@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCompany;
 use App\Http\Requests\UpdateCompany;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class CompanyController extends Controller
@@ -24,13 +23,15 @@ class CompanyController extends Controller
         return view('admin.company.create');
     }
 
-    public function store(CreateCompany $request)
+    public function store(CreateCompany $request): RedirectResponse
     {
         Company::create($request->validatedWithLogo());
 
         flash('Company created')->success();
 
-        return redirect()->route('company.index');
+        return redirect()
+            ->route('company.index')
+            ->withInput();
     }
 
     public function show(Company $company): View
@@ -54,7 +55,8 @@ class CompanyController extends Controller
         flash('Company updated')->success();
 
         return redirect()
-            ->route('company.index');
+            ->route('company.index')
+            ->withInput();
     }
 
     public function destroy(Company $company): RedirectResponse
