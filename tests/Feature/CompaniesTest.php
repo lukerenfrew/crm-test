@@ -196,7 +196,6 @@ class CompaniesTest extends TestCase
     public function can_update_company()
     {
         Storage::fake('logos');
-        $logoFile = UploadedFile::fake()->image('logo2.jpg', 100, 100);
 
         $company = factory(Company::class)->create([
             'name' => 'company #1',
@@ -215,7 +214,7 @@ class CompaniesTest extends TestCase
             ->submitForm('Update', [
                 'name' => 'updated company #1',
                 'email' => 'other@company1.com',
-                'logo' => $logoFile,
+                'logo' => '',
                 'website' => 'http://www.company1.co.uk',
             ])
             ->seeRouteIs('company.index')

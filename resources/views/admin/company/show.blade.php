@@ -30,7 +30,7 @@
             </tr>
             <tr>
                 <th>Logo:</th>
-                <td><img width="100px" src="{{$company->logo}}" alt="{{$company->name}} logo"/></td>
+                <td><img width="100px" src="{{$company->logoUrl}}" alt="{{$company->name}} logo"/></td>
             </tr>
             <tr>
             </tr>

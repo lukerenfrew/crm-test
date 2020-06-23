@@ -10,6 +10,6 @@ $factory->define(Company::class, function (Faker $faker) {
         'name' => $faker->company,
         'email' => $faker->companyEmail,
         'website' => $faker->url,
-        'logo' => $faker->imageUrl(150, 150),
+        'logo' => 'logo.jpg',
     ];
 });

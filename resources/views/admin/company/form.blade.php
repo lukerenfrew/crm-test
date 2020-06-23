@@ -31,7 +31,7 @@
         <label for="name" class="col-sm-2 control-label">Logo</label>
         <div class="col-sm-10">
             @if(isset($company))
-                <img width="100px" src="{{$company->logo}}" alt="{{$company->name}} logo"/>
+                <img width="100px" src="{{$company->logoUrl}}" alt="{{$company->name}} logo"/>
             @endif
             <input type="file" class="form-control" name="logo" placeholder="Logo" value="{{$company->logo ?? ''}}">
             @if($errors->has('logo'))

@@ -6,7 +6,10 @@ trait UploadsLogo
 {
     public function validatedWithLogo(): array
     {
-        return array_merge($this->validated(), ['logo' => $this->uploadLogo()]);
+        $logo = $this->uploadLogo();
+        $mergedInput = array_merge($this->validated(), ['logo' => $logo]);
+
+        return array_filter($mergedInput);
     }
 
     private function uploadLogo(): ?string
