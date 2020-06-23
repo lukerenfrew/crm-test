@@ -66,11 +66,11 @@ class CompaniesTest extends TestCase
         $this->visitRoute('company.index')
             ->see('company #1')
             ->see('admin@company1.com')
-            ->seeElement('img', ['src' => 'logo1.jpg'])
+            ->seeElement('img', ['src' => 'http://crm-test.test/logos/logo1.jpg'])
             ->see('http://www.company1.com')
             ->see('company #2')
             ->see('admin@company2.com')
-            ->seeElement('img', ['src' => 'logo2.jpg'])
+            ->seeElement('img', ['src' => 'http://crm-test.test/logos/logo2.jpg'])
             ->see('http://www.company2.com');
     }
 
@@ -108,7 +108,7 @@ class CompaniesTest extends TestCase
             ->visitRoute('company.show', $company->id)
             ->see('company #1')
             ->see('admin@company1.com')
-            ->seeElement('img', ['src' => 'logo1.jpg'])
+            ->seeElement('img', ['src' => 'http://crm-test.test/logos/logo1.jpg'])
             ->see('http://www.company1.com');
     }
 
@@ -210,7 +210,7 @@ class CompaniesTest extends TestCase
             ->seeInField('name', 'company #1')
             ->seeInField('email', 'admin@company1.com')
             ->seeInField('website', 'http://www.company1.com')
-            ->seeElement('img', ['src' => 'logo.jpg'])
+            ->seeElement('img', ['src' => 'http://crm-test.test/logos/logo.jpg'])
             ->submitForm('Update', [
                 'name' => 'updated company #1',
                 'email' => 'other@company1.com',
