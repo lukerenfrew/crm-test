@@ -35,4 +35,8 @@
             </tbody>
         </table>
     </div>
+
+    <h4>Employees</h4>
+
+    @include('admin.employee.table', ['employees' => $employees])
 @stop

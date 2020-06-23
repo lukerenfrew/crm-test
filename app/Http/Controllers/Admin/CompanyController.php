@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Company;
+use App\Employee;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCompany;
 use App\Http\Requests\UpdateCompany;
@@ -36,8 +37,16 @@ class CompanyController extends Controller
 
     public function show(Company $company): View
     {
+        $employees = Employee::query()
+            ->isEmployedBy($company)
+            ->get()
+            ->each(function (Employee $employee) use ($company) {
+                $employee->setRelation('company', $company);
+            });
+
         return view('admin.company.show', [
-            'company' => $company
+            'company' => $company,
+            'employees' => $employees
         ]);
     }
 

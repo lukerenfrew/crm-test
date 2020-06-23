@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Company;
 
+use App\Employee;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -104,12 +105,19 @@ class CompaniesTest extends TestCase
             'website' => 'http://www.company1.com',
         ]);
 
+        $employee = factory(Employee::class)->create([
+            'company_id' => $company->id,
+            'firstname' => 'Test',
+            'surname' => 'Employee',
+        ]);
+
         $this->actingAsAdmin()
             ->visitRoute('company.show', $company->id)
             ->see('company #1')
             ->see('admin@company1.com')
             ->seeElement('img', ['src' => 'http://crm-test.test/logos/logo1.jpg'])
-            ->see('http://www.company1.com');
+            ->see('http://www.company1.com')
+            ->seeLink('Test Employee', route('employee.show', $employee));;
     }
 
     /**
