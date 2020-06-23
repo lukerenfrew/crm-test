@@ -11,7 +11,6 @@
     <a class="btn btn-primary" href="{{route('company.create')}}">Create</a>
     <hr/>
 
-
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
@@ -38,4 +37,5 @@
 
         </tbody>
     </table>
+    {{ $companies->links() }}
 @stop

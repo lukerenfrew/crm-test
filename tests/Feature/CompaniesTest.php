@@ -75,6 +75,24 @@ class CompaniesTest extends TestCase
     /**
      * @test
      */
+    public function companies_are_paginated()
+    {
+        $companies = factory(Company::class, 11)->create();
+
+        $this
+            ->actingAsAdmin()
+            ->visitRoute('company.index')
+            ->seeText($companies[9]->name)
+            ->dontSeeText($companies[10]->name)
+            ->within('.pagination', function () {
+                $this->seeInElement('.page-link', 1);
+                $this->seeLink('2', route('company.index', ['page' => 2]));
+            });
+    }
+
+    /**
+     * @test
+     */
     public function can_view_a_company()
     {
         $company = factory(Company::class)->create([
