@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 trait UploadsLogo
 {
-    public function validatedWithLogo(): array
+    public function inputWithWithUploadedLogo(): array
     {
         $logo = $this->uploadLogo();
 

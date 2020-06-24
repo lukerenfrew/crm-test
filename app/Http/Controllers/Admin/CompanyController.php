@@ -26,7 +26,7 @@ class CompanyController extends Controller
 
     public function store(CreateCompany $request): RedirectResponse
     {
-        Company::create($request->validatedWithLogo());
+        Company::create($request->inputWithWithUploadedLogo());
 
         flash('Company created')->success();
 
@@ -59,7 +59,7 @@ class CompanyController extends Controller
 
     public function update(UpdateCompany $request, Company $company): RedirectResponse
     {
-        $company->update($request->validatedWithLogo());
+        $company->update($request->inputWithWithUploadedLogo());
 
         flash('Company updated')->success();
 
